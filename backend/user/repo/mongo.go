@@ -58,3 +58,10 @@ func (m *mongoUserRepo) FindOne(ctx context.Context, conditions map[string]inter
 
 	return user, nil
 }
+func (m *mongoUserRepo) Count(ctx context.Context, conditions interface{}) (int64, error) {
+	count, err := m.c.CountDocuments(ctx, conditions)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}

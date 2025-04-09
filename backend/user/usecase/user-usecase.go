@@ -49,41 +49,25 @@ func (us *userUsecase) GetUser(c context.Context, userID string) (*domain.User, 
 	return user, nil
 }
 
-// func (us *userUsecase) List(c context.Context, input *user.ListUserInput) ([]*domain.User, error) {
-// 	ctx, cancel := context.WithTimeout(c, us.contextTimeout)
-// 	defer cancel()
-
-// 	conditions := bson.M{}
-
-// 	options := options.Find()
-
-// 	options.SetSkip(int64(*input.Offset))
-// 	options.SetLimit(int64(*input.Limit))
-
-// 	users, err := us.userRepo.Find(ctx, conditions, options)
-
-// 	if err != nil {
-// 		logrus.WithError(err).Error("Get list user failed")
-// 		return nil, err
-// 	}
-
-// 	return users, nil
-
-// }
-
 func (us *userUsecase) List(c context.Context, input *user.ListUserInput) ([]*domain.User, error) {
 	ctx, cancel := context.WithTimeout(c, us.contextTimeout)
 	defer cancel()
 
-	conditions := bson.M{}
+	conditions := bson.M{
+		"Status": 0, // Sử dụng "Status" để khớp với MongoDB
+	}
 
 	options := options.Find()
-	options.SetLimit(int64(*input.Limit)) // Giới hạn số lượng user trả về
+	options.SetLimit(int64(*input.Limit))
 
 	users, err := us.userRepo.Find(ctx, conditions, options)
 	if err != nil {
 		logrus.WithError(err).Error("Get list user failed")
 		return nil, err
+	}
+
+	if len(users) == 0 {
+		return nil, errors.New("No users found with the given conditions")
 	}
 
 	return users, nil

@@ -5,6 +5,7 @@ type ListUserInput struct {
 	Ascending *bool
 	Offset    *int64
 	Limit     *int64
+	Status    *int
 }
 
 func (s *ListUserInput) SetSort(sort string) *ListUserInput {
@@ -25,4 +26,7 @@ func (s *ListUserInput) SetLimit(limit int64) *ListUserInput {
 func (s *ListUserInput) SetAscending(ascending bool) *ListUserInput {
 	s.Ascending = &ascending
 	return s
+}
+func (s *ListUserInput) SetStatus(status int) {
+	s.Status = &status
 }

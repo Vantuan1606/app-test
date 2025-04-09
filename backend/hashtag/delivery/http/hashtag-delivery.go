@@ -33,6 +33,7 @@ func NewHashtagHTTPHandler(e *echo.Echo, hg domain.IHashtagUsecase) {
 	}
 
 	e.GET("/hashtag", handler.Lists)
+	// e.GET("/hashtag/:id", handler.GetHashtagDetail)
 
 }
 
@@ -84,3 +85,8 @@ func (hg *hashtagHTTPHandler) Lists(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, &responseHashtags{Hashtags: hashtags})
 }
+
+// func (hg *hashtagHTTPHandler) GetHashtagDetail(c echo.Context) error {
+
+// 	return c.JSON(http.StatusOK, &responseHashtags{Hashtags: hashtags})
+// }

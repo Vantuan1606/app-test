@@ -7,14 +7,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/Vantuan1606/app-test/user"
-
 )
 
 type User struct {
 	ID       primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
 	Username string             `json:"username" bson:"username,omitempty"`
 	Password string             `json:"password" bson:"password,omiempty"`
-	
+	Status   int                `json:"status" bson:"Status,omitempty"`
 }
 
 type UsersRequest struct {
@@ -29,4 +28,5 @@ type IUserUsecase interface {
 type IUserRepo interface {
 	FindOne(context.Context, map[string]interface{}) (*User, error)
 	Find(context.Context, map[string]interface{}, ...*options.FindOptions) ([]*User, error)
+	// Count(ctx context.Context, conditions interface{}) (int64, error)
 }

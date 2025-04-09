@@ -86,6 +86,9 @@ func (uss *UserHTTPHandler) Lists(c echo.Context) error {
 	input.SetLimit(limitInt)
 
 	users, err := uss.userUsecase.List(ctx, &input)
+
+	// log.Println("stastus:", users[0].Status)
+
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return c.JSON(http.StatusNotFound, &responseErr{
