@@ -19,10 +19,71 @@
 
     <h2>Danh sách tài khoản</h2>
     <ul id="userList"></ul>
+    <label for="commnet">Chọn Comment:</label>
+    <select name="comment" id="comment"> </select>  
+    
+    <h2>Nhập số lượng comment</h2>
+    <form id="countForm">
+        <input type="number" id="countCommnent" min="1" required />
+        <button type="submit">Gửi</button>
+    </form>
+
 
     <script>
-        
-       document.getElementById("countForm").addEventListener("submit", async function (event) {
+        document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            // Gọi API để lấy danh sách hashtag
+            const response = await fetch("http://localhost:8080/hashtag");
+
+            const data = await response.json();
+                console.log("data:", data)
+            if (!data.hashtags || data.hashtags.length === 0) {
+                console.error("Không có hashtag ");
+                return;
+            }
+
+            // Hiển thị danh sách hashtag trong <select>
+            const hashtagSelect = document.getElementById("comment");  
+            hashtagSelect.innerHTML = ""; 
+            data.hashtags.forEach(hashtag => {
+                const option = document.createElement("option");
+                option.value = hashtag.id || hashtag._id;
+                option.textContent = hashtag.name;
+                console.log("hashtag id:", option.value)
+                hashtagSelect.appendChild(option);
+            });
+            hashtagSelect.addEventListener("change", function () {
+            const selectedHashtagId = hashtagSelect.value; // Lấy id của hashtag được chọn
+            console.log("Hashtag ID được chọn:", selectedHashtagId);
+
+            // Gửi id của hashtag đến backend hoặc xử lý thêm tại đây
+        });
+            
+        } catch (error) {
+            console.error("Lỗi khi gọi API hashtag:", error);
+        }
+    });
+        hashtagSelect.addEventListener("change", async function () {
+    const selectedHashtagId = hashtagSelect.value;
+    console.log("Hashtag ID được chọn:", selectedHashtagId);
+
+    try {
+        const response = await fetch("http://localhost:8080/selected-hashtag", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ hashtagId: selectedHashtagId }),
+        });
+
+        const result = await response.json();
+        console.log("Phản hồi từ backend:", result);
+    } catch (error) {
+        console.error("Lỗi khi gửi hashtag ID đến backend:", error);
+    }
+    });
+
+        document.getElementById("countForm").addEventListener("submit", async function (event) {
             event.preventDefault();
             const count = document.getElementById("countInput").value;
             const link= document.getElementById("linkInput").value;
@@ -35,7 +96,7 @@
             console.log("Số lượng yêu cầu:", count);
 
             try {
-                const response = await fetch(`http://localhost:8081/user?limit=${count}`);
+                const response = await fetch(`http://localhost:8080/user?limit=${count}&status=0`);
                 const data = await response.json();
 
                 // Xóa danh sách cũ trước khi thêm mới
@@ -44,7 +105,7 @@
                 if (data && data.users) {
                 // Tạo một mảng các Promises cho mỗi user để gọi API /watch song song
                 const watchPromises = data.users.map(user => {
-                return fetch("http://localhost:8081/watch", {
+                return fetch("http://localhost:8080/watch", {
                     method: "POST",
                     headers: {
                     "Content-Type": "application/json",
@@ -71,6 +132,9 @@
                 console.error("Lỗi khi gọi API:", error);
             }
         });
-    </script>
+   
+   
+   
+   </script>
 </body>
 </html>
